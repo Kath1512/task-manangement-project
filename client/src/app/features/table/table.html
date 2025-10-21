@@ -1,0 +1,59 @@
+<main>
+    <table mat-table [dataSource]="displayDataSource()" id="table-projects">
+        @for(colHeader of colHeaders; track colHeader.key){
+            <ng-container [matColumnDef]="colHeader.key.toString()">
+                <th mat-header-cell *matHeaderCellDef>
+                    {{colHeader.label | titlecase}}
+                </th>
+                <td mat-cell *matCellDef="let el">
+                    @switch (colHeader.key) {
+                        @case ('createdAt'){
+                            <div class="cell">
+                                {{ el[colHeader.key] | date }}
+                            </div>
+                        }
+                        @case ('deadline'){
+                            <div class="cell">
+                                {{ el[colHeader.key] | date }}
+                            </div>
+                        }
+                        @case ('title'){
+                            <div class="cell">
+                                <a [routerLink]="['/projects', el.id]">{{ el[colHeader.key] }}</a>
+                            </div>
+                        }
+                        @case ('creator'){
+                            <div class="cell">
+                                <a [routerLink]="['/staff', el.creatorId]">{{ el[colHeader.key] }}</a>
+                            </div>
+                        }
+                        @case ('leader'){
+                            <div class="cell">
+                                <a [routerLink]="['/staff', el.leaderId]">{{ el[colHeader.key] }}</a>
+                            </div>
+                        }
+                        @default {
+                            <div class="cell">
+                                {{ el[colHeader.key] }}
+                            </div>
+                        }
+                    }
+                </td>
+            </ng-container>
+        }
+
+        <tr mat-header-row *matHeaderRowDef="colKeys"></tr>
+        <tr mat-row *matRowDef="let row; columns: colKeys"></tr>
+    </table>
+    <div class="page-navigator">
+        <button class="navigate backward" (click)="handlePreviousPage()">
+            <mat-icon class="icon arrow backward">arrow_back</mat-icon>
+        </button>
+        <div class="page-display">
+            Page <input type="text" [value]="currentPage()" (input)="handleFindPage($event)"> of {{totalPages}}
+        </div>
+        <button class="navigate forward" (click)="handleNextPage()">
+            <mat-icon class="icon arrow forward">arrow_forward</mat-icon>
+        </button>
+    </div>
+</main>

@@ -1,0 +1,64 @@
+.main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .login-form {
+        width: 25vw;
+        height: 40vh;
+        border-radius: 1rem;
+        background-color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 0 0 10px 5px hsla(0, 0%, 50%, 20%);
+        border: 1px solid hsla(0, 0%, 30%, 20%);
+        backdrop-filter: blur(5px);
+
+        h3{
+            margin: 0;
+            padding: 0;
+            padding: 1rem;
+            border-bottom: 1px solid hsl(0, 0%, 80%);
+        }
+
+        .login-inputs{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            input{
+                border-radius: .25rem;
+                border: 1px solid hsl(0, 0%, 70%);
+                padding: .5rem;
+                outline: none;
+                margin: 0 1rem;
+            }
+        }
+
+        button{
+            font-size: 1.1rem;
+            padding: .5em;
+            border-radius: .25rem;
+            background-color: hsl(210, 90%, 50%);
+            color: hsl(0, 0%, 100%);
+            border: none;
+            cursor: pointer;
+            margin: 0 1rem;
+            transition: background-color 0.5s linear;
+            &:hover{
+                background-color: hsl(210, 90%, 65%);
+            }
+        }
+
+        a{
+            margin-bottom: 1rem;
+            align-self: center;
+            text-decoration: none;
+            color: hsl(0, 0%, 0%);
+            font-weight: 500;
+        }
+    }
+
+}

@@ -1,0 +1,48 @@
+<div class="main-page">
+    <header>
+        <h2>My Profile</h2>
+    </header>
+    <main>
+        <form id="form-change-password" [formGroup]="changePasswordForm" (ngSubmit)="handleChangePassword()">
+            <div class="form-header">
+                <h3>Change password</h3>
+            </div>
+            <div class="form-main">
+                <div class="form-input">
+                    <label>Full Name:</label>
+                    <div>{{currentUser()?.fullName}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Role:</label>
+                    <div>{{currentUser()?.role}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Email:</label>
+                    <div>{{currentUser()?.email}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Team Id:</label>
+                    <div>{{currentUser()?.teamId}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Old password:</label>
+                    <input type="password" formControlName="oldPassword">
+                </div>
+                <div class="form-input">
+                    <label>New password:</label>
+                    <input type="password" formControlName="newPassword">
+                </div>
+                <div class="form-input">
+                    <label>Confirm new password:</label>
+                    <input type="password" formControlName="confirmNewPassword">
+                </div>
+                <div id="form-button">
+                    <a href=""></a>
+                    <button type="submit">
+                        Change password
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+</div>

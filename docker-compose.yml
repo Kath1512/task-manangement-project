@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres1512
+      POSTGRES_DB: taskmanagement
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/backup_utf8.sql:/docker-entrypoint-initdb.d/backup.sql
+    ports:
+      - "5432:5432"
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    environment: 
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=taskmanagement;Username=postgres;Password=postgres1512
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client
+    depends_on:
+      - server
+    ports:
+      - "4200:80"
+volumes:
+  pgdata:

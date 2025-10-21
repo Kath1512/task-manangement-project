@@ -1,0 +1,45 @@
+<main>
+    <div class="modal">
+        <h2>New project</h2>
+        <!-- <button (click)="closeModal()" id="close-button">
+            <mat-icon class="close-icon">close</mat-icon>
+        </button> -->
+        <form id="form-add-project" [formGroup]="projectForm" (ngSubmit)="handleAddProject()">
+            <div class="form-input">
+                <label>Title</label>
+                <input type="text" name="title" class="input title" placeholder="Add title"
+                formControlName="title">
+            </div>
+            <div class="form-input">
+                <label>Description</label>
+                <textarea name="description" class="textarea description" placeholder="Add description"
+                formControlName="description"></textarea>
+            </div>
+            <div class="form-group">
+                <div class="form-input">
+                    <label>Deadline</label>
+                    <input type="date" name="deadline" class="input deadline"
+                    placeholder="Add deadline" formControlName="deadline">
+                </div>
+                <div class="form-input">
+                    <label>Status</label>
+                    <select name="status" class="input status" formControlName="status">
+                        <option value="In progress">In progress</option>
+                        <option value="Planned">Planned</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-input">
+                <label>Note</label>
+                <textarea name="note" class="textarea note" placeholder="Add note"
+                formControlName="note"></textarea>
+            </div>
+            <div class="form-buttons">
+                <button type="button" class="button cancel" (click)="closeModal()">Cancel</button>
+                <button class="button create">Create project</button>
+            </div>
+        </form>
+    </div>
+</main>

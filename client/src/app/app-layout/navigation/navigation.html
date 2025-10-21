@@ -1,0 +1,44 @@
+<nav>
+    <ul>
+        <li><a routerLink="/"><img src="https://cdn-icons-png.flaticon.com/512/4345/4345800.png" alt="logo"></a></li>
+        <li><a routerLink="/">Home</a></li>
+        <li><a routerLink="/projects">Projects</a></li>
+        @if(currentUser()?.role == 'admin' || currentUser()?.role == 'leader'){
+            @if(currentUser()?.role == 'admin'){
+                <li><a routerLink='/team'>All Teams</a></li>
+            }
+            @else {
+                <li><a routerLink='/team'>My Team</a></li>
+            }
+            <li><a routerLink="/staff">Staff Management</a></li>
+        }
+    </ul>
+    <div class="right-side">
+        @if(isLogin()){
+            <div class="user-name">
+                <button (click)="toggleUserMenu()" id="user-menu-btn">
+                    <h3>
+                        {{currentUser()?.fullName}} ▼
+                    </h3>
+                </button>
+                @if(isUserMenuOpen){
+                    <div [ngClass]="{'user-menu': isUserMenuOpen, 'hide': !isUserMenuOpen}" animate.enter="enter"
+                    (appClickOutsideDirective)="isUserMenuOpen = false">
+                        <ul>
+                            <li><a routerLink="/my-profile" (click)="toggleUserMenu()">Profile</a></li>
+                            <li><a routerLink="#" (click)="toggleUserMenu()">Setting</a></li>
+                            <li><button (click)="handleLogout()">Logout</button></li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        }
+        @else {
+            <div class="login-register">
+                <a routerLink="/login">Login</a>
+                <a routerLink="/register">Register</a>
+            </div>
+        }
+    </div>
+</nav>
+

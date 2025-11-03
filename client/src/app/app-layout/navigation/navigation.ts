@@ -4,6 +4,7 @@ import { ColHeader, IProject, User } from '../../models/model';
 import { UserService } from '../../services/user-service/user-service';
 import { CommonModule } from '@angular/common';
 import { ClickOutsideDirective } from '../../shared/directives/click-outisde-directive/click-outside-directive';
+import { ProjectService } from '../../services/project-service/project-service';
 
 @Component({
   selector: 'app-navigation',
@@ -14,6 +15,7 @@ import { ClickOutsideDirective } from '../../shared/directives/click-outisde-dir
 })
 export class Navigation implements OnInit {
     private userService = inject(UserService);
+    private projectService = inject(ProjectService);
     private router = inject(Router);
     isUserMenuOpen = false;
     isLogin = computed(() => this.userService.currentUser() != null);
@@ -32,6 +34,8 @@ export class Navigation implements OnInit {
 
     resetAll(): void {
         this.isUserMenuOpen = false;
+        this.userService.refereshAll();
+        this.projectService.refereshAll();
     }
 
     ngOnInit(): void {

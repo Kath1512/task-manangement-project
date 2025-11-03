@@ -1,5 +1,5 @@
 import { catchError, Observable, throwError } from 'rxjs';
-import { APIResponse, IChangePasswordForm, ILoginForm, IRegisterForm, User } from '../../models/model';
+import { APIResponse, IAddStaffForm, IChangePasswordForm, ILoginForm, IRegisterForm, IStaff, User } from '../../models/model';
 import { Injectable, inject } from '@angular/core';
 import { changePasswordRoute, loginRoute, registerRoute } from '../../shared/utils/APIRoute';
 import { ApiService } from '../api-service/api-service';
@@ -16,6 +16,10 @@ export class AuthService {
 
     register(values: IRegisterForm): Observable<APIResponse<User>> {
         return this.apiService.post<APIResponse<User>>(registerRoute, values);
+    }
+
+    addStaff(values: IAddStaffForm): Observable<APIResponse<IStaff>> {
+        return this.apiService.post<APIResponse<IStaff>>(registerRoute, values);
     }
 
     changePassword(values: IChangePasswordForm): Observable<APIResponse<null>> {

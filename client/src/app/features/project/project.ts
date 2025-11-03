@@ -53,7 +53,7 @@ export class Project implements OnInit {
     }
 
     fetchProject(): void {
-        const teamId: number = this.currentUser()?.teamId || -1;
+        const teamId: number | undefined = this.currentUser()?.teamId;
         this.projectService.getProjectsByTeam(teamId).subscribe({
             next: (data) => this.handleSuccess(data),
             error: (err) => this.handleError(err)
@@ -62,7 +62,10 @@ export class Project implements OnInit {
 
     fetchLeaders(): void {
         this.userService.getAllLeaders().subscribe({
-            next: (data) => this.allLeaders.set(data.data!),
+            next: (data) => {
+                this.allLeaders.set(data.data!)
+                console.log(data);
+            },
             error: (err) => this.handleError(err)
         });
     }
@@ -108,8 +111,9 @@ export class Project implements OnInit {
     handleRefereshProjectCache(): void {
         this.projectService.refereshProjectCache();
         this.fetchProject();
+        this.userService.refereshLeadersCache();
+        this.fetchLeaders();
         this.clearFilter();
-
     }
 
 }

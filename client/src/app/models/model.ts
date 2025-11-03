@@ -18,6 +18,15 @@ export interface IRegisterForm{
     fullName: string;
 }
 
+export interface IAddStaffForm{
+    username: string;
+    password: string;
+    email: string;
+    role?: UserRole;
+    fullName: string;
+    teamId?: number;
+    leaderId?: number
+}
 export interface ILoginForm{
     username: string;
     password: string;
@@ -36,7 +45,7 @@ export interface APIResponse<T>{
     data?: T;
 }
 
-export type Status = 'Planned' | 'Completed' | 'In progress' | 'Cancelled';
+export type Status = 'Planned' | 'Completed' | 'InProgress' | 'Cancelled';
 export type DateFormat = `${number}${number}/${number}${number}/${number}${number}${number}${number}`;
 
 export interface IProject{
@@ -65,6 +74,7 @@ export interface IProjectForm{
 }
 
 export interface IEditProjectForm{
+    id: number;
     title: string;
     description: string;
     status: Status;
@@ -82,6 +92,14 @@ export interface IStaff{
     id: number;
     email: string;
     role: UserRole;
+    teamId: number;
+    leaderId: number
+}
+
+export interface ITeam{
+    teamId: number;
+    leaderId: number;
+    memberIds?: number[];
 }
 
 export interface ISearchForm{

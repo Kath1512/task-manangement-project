@@ -1,0 +1,36 @@
+<main>
+    <div class="modal">
+        <h2>Add New Staff</h2>
+        <!-- <button (click)="closeModal()" id="close-button">
+            <mat-icon class="close-icon">close</mat-icon>
+        </button> -->
+        <form id="form-edit-project" [formGroup]="AddStaffForm" (ngSubmit)="handleAddStaff()">
+            @for(label of inputLabels; track label.key){
+                <div class="form-input">
+                    <label>{{label.name | titlecase}}</label>
+                    <input type="text" [name]="label.key" [classList]="'input ' + label.key"
+                    [placeholder]="'Enter ' + label.name" [formControlName]="label.key">
+                </div>
+            }
+            @if(currentUser()?.role == 'admin'){
+                <div class="selects">
+                    @for(label of selectLabels(); track label.key){
+                        <div class="form-input">
+                            <label>{{label.name}}</label>
+                            <select [name]="label.key" [class]="'input' + label.key" [formControlName]="label.key">
+                                @for(option of label.options; track option){
+                                    <option [value]="option">{{option}}</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+            }
+            {{AddStaffForm.value | json}}
+            <div class="form-buttons">
+                <button type="button" class="button cancel" (click)="closeModal()">Cancel</button>
+                <button class="button create">Add staff</button>
+            </div>
+        </form>
+    </div>
+</main>

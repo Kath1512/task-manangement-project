@@ -13,14 +13,13 @@ const changePasswordRoute = `${host}/auth/change-password`;
 
 const getProjectsRoute = `${host}/projects`;
 const addProjectRoute = `${host}/projects/add-project`;
-const editProjectRoute = `${host}/projects/edit-project`;
+const projectRoute = `${host}/projects`;
 
 //user
 
-const getUsersByTeamRoute = `${host}/users/teams`
-const getLeadersRoute = `${host}/users/leaders`
+const getUsersRoute = `${host}/users`
 
 export {host, registerRoute, loginRoute, changePasswordRoute,
-    getProjectsRoute, addProjectRoute, editProjectRoute,
-    getUsersByTeamRoute, getLeadersRoute
+    getProjectsRoute, addProjectRoute, projectRoute,
+    getUsersRoute
 };

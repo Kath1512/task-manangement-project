@@ -8,10 +8,16 @@ services:
       POSTGRES_PASSWORD: postgres1512
       POSTGRES_DB: taskmanagement
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./db/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - pgdata:/var/lib/postgresql
+      - ./db/dump_latest.sql:/docker-entrypoint-initdb.d/dump_latest.sql
     ports:
       - "5432:5432"
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
   server:
     build: 
       context: ./server
@@ -20,8 +26,10 @@ services:
     environment: 
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=taskmanagement;Username=postgres;Password=postgres1512
+      ConnectionStrings__RedisConnection: redis:6379
     depends_on:
       - db
+      - redis
     ports:
       - "5000:5000"
   client:

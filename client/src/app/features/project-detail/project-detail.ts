@@ -24,7 +24,7 @@ export class ProjectDetail implements OnInit {
     currentProject = signal<IProject | null>(null);
     displayProject = signal<([string, any])[] | null>(null);
     isOpenEditProjectModal = false;
-    isPermitted = computed(() => this.currentProject()?.teamId == this.currentUser()?.teamId);
+    isPermitted = computed(() => this.currentProject()?.teamId == this.currentUser()?.teamId || this.currentUser()?.role == 'admin');
     canEdit = computed(() => (this.currentUser()?.id == this.currentProject()?.leaderId) ||
                             (this.currentUser()?.id == this.currentProject()?.creatorId));
 

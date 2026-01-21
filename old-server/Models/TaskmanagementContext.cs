@@ -22,14 +22,14 @@ public partial class TaskmanagementContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=db;Database=taskmanagement;Username=postgres;Password=postgres1512");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=db;Port=5432;Database=taskmanagement;Username=postgres;Password=postgres1512");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .HasPostgresEnum("type_status", new[] { "InProgress", "Planned", "Completed", "Cancelled" })
+            .HasPostgresEnum("type_status", new[] { "Planned", "InProgress", "Completed", "Cancelled" })
             .HasPostgresEnum("user_role", new[] { "admin", "leader", "developer" });
-
 
         modelBuilder.Entity<Project>(entity =>
         {
@@ -41,7 +41,6 @@ public partial class TaskmanagementContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_DATE")
                 .HasColumnName("created_at");
-            entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.CreatorId).HasColumnName("creator_id");
             entity.Property(e => e.Deadline).HasColumnName("deadline");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -98,10 +97,7 @@ public partial class TaskmanagementContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.FullName).HasColumnName("full_name");
-            entity.Property(e => e.LeaderId).HasColumnName("leader_id");
-            entity.Property(e => e.Password).HasColumnName("password"); 
-            entity.Property(e => e.TeamId).HasColumnName("team_id");
-            entity.Property(e => e.Role).HasColumnName("role");
+            entity.Property(e => e.Password).HasColumnName("password");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")

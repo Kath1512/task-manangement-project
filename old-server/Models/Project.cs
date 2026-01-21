@@ -8,7 +8,6 @@ public partial class Project
     public int Id { get; set; }
 
     public string Description { get; set; } = null!;
-    public TypeStatus Status { get; set; } = TypeStatus.Planned;
 
     public DateOnly? CreatedAt { get; set; }
 

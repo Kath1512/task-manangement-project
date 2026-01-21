@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Dapper;
-using Npgsql;
-using UserManagement;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
-
+using Npgsql;
+using TaskManagement.DTOs;
+using TaskManagement.Models;
+using TaskManagement.Services.Interfaces;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TaskManagement.Controllers
@@ -12,93 +13,65 @@ namespace TaskManagement.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly string _connString;
-        public ProjectsController(IConfiguration config) 
+        private readonly IProjectService _projectService;
+        private readonly ICacheService _cacheService;
+        public ProjectsController(IProjectService projectService, ICacheService cacheSevice) 
         {
-            _connString = config.GetConnectionString("DefaultConnection")!;
-            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+            _projectService = projectService;
+            _cacheService = cacheSevice;
         }
         // GET: api/<ProjectController>
         [HttpGet("")]
-        public IActionResult GetAllProjects([FromQuery] int teamId)
+        public async Task<IActionResult> GetProjectsByTeam([FromQuery] int? teamId)
         {
-            try
+            var key_teamId = teamId.HasValue ? $":team_id:{teamId}" : "";
+            var key = $"myapp:projects{key_teamId}";
+            var cacheData = await _cacheService.GetDataAsync<List<ProjectDTO>>(key);
+            if(cacheData is not null)
             {
-                using var db = new NpgsqlConnection(_connString);
-                var findProjectsSQL = teamId == -1 ? """
-                    SELECT p.*, u_creator.full_name AS creator, u_leader.full_name AS leader
-                    FROM projects p
-                    JOIN Users u_creator ON u_creator.id = p.creator_id
-                    JOIN Users u_leader ON u_leader.id = p.leader_id
-                    ORDER BY id DESC
-                    """ :
-                    """
-                    SELECT p.*, u_creator.full_name AS creator, u_leader.full_name AS leader
-                    FROM projects p
-                    JOIN Users u_creator ON u_creator.id = p.creator_id
-                    JOIN Users u_leader ON u_leader.id = p.leader_id
-                    WHERE p.team_id = @TeamId
-                    ORDER BY id DESC
-                    """;
-                var projects = db.Query<Project>(findProjectsSQL, new {TeamId = teamId});
-                return Ok(new {success = true, message = "Returned all projects", data = projects});
+                return Ok(ApiResponse.OkFromCache("Return all projects", cacheData));
             }
-            catch (Exception ex)
+            var response = await _projectService.GetProjectsByTeamIdAsync(teamId);
+            if(response.Success == false)
             {
-                return StatusCode(500, new { sucess = false, message = "Internal Server error " + ex.Message });
+                return StatusCode(response.ErrorCode ?? 500, ApiResponse.Error(response.ErrorMessage ?? "Internal Server Error"));
             }
+            if(response.Data is not null) await _cacheService.SetDataAsync<List<ProjectDTO>>(key, response.Data);
+            return Ok(ApiResponse.Ok("Ok", response.Data));
         }
         [HttpGet("{ProjectId}")]
-        public async Task<IActionResult> GetProjectById(int ProjectId)
+        public async Task<IActionResult> GetProjectById(int projectId)
         {
-            try
+            var response = await _projectService.GetProjectByIdAsync(projectId);
+            if (response.Success == false)
             {
-                using var db = new NpgsqlConnection(_connString);
-                var findProjectByIdSQL = """
-                    SELECT p.*, u_creator.full_name AS creator, u_leader.full_name AS leader
-                    FROM projects p
-                    JOIN Users u_creator ON u_creator.id = p.creator_id
-                    JOIN Users u_leader ON u_leader.id = p.leader_id
-                    WHERE p.id = @ProjectId
-                    """;
-                var project = await db.QueryFirstOrDefaultAsync<Project>(findProjectByIdSQL, new { ProjectId = ProjectId });
-                if(project == null)
-                {
-                    return NotFound(new { success = false, message = "Project not found" });
-                }
-                return Ok(new { success = true, message = "OK", data = project });
+                return StatusCode(response.ErrorCode ?? 500, ApiResponse.Error(response.ErrorMessage ?? "Internal Server Error"));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { sucess = false, message = "Internal Server error " + ex.Message });
-            }
+            return Ok(ApiResponse.Ok("Ok", response.Data));
         }
         [HttpPost("add-project")]
-        public IActionResult AddProject([FromBody] ProjectDTO projectDTO)
+        public async  Task<IActionResult> AddProject([FromBody] AddProjectRequestDTO projectDTO)
         {
-            try
+            var response = await _projectService.CreateProjectAsync(projectDTO);
+            if (response.Success == false)
             {
-                using var db = new NpgsqlConnection(_connString);
-                var addProjectSQL = """
-                    INSERT INTO Projects(description, creator_id, leader_id, team_id, status, deadline, note, title)
-                    VALUES (@Description, @CreatorId, @LeaderId, @TeamId, CAST(@Status AS type_status), @Deadline, @Note, @Title)
-                    RETURNING id;
-                    """;
-                var findProjectSQL = """
-                    SELECT p.*, u_creator.full_name AS creator, u_leader.full_name AS leader
-                    FROM projects p
-                    JOIN Users u_creator ON u_creator.id = p.creator_id
-                    JOIN Users u_leader ON u_leader.id = p.leader_id
-                    WHERE p.id = @ProjectId
-                    """;
-                int projectId = db.ExecuteScalar<int>(addProjectSQL, projectDTO);
-                var project = db.QueryFirstOrDefault<Project>(findProjectSQL, new {ProjectId = projectId});
-                return Ok(new {success = true, message = "Added new project", data = project});
+                return StatusCode(response.ErrorCode ?? 500, ApiResponse.Error(response.ErrorMessage ?? "Internal Server Error"));
             }
-            catch(Exception ex)
+            var key = "myapp:projects";
+            await _cacheService.RemoveAsync(key);
+            return Ok(ApiResponse.Ok("Ok", response.Data));
+        }
+        [HttpPatch("{ProjectId}")]
+        public async Task<IActionResult> EditProject([FromBody] EditProjectRequestDTO projectDTO)
+        {
+            var response = await _projectService.UpdateProjectAsync(projectDTO);
+            if (response.Success == false)
             {
-                return StatusCode(500, new { sucess = false, message = "Internal Server error " + ex.Message });
+                return StatusCode(response.ErrorCode ?? 500, ApiResponse.Error(response.ErrorMessage ?? "Internal Server Error"));
             }
+            var key = "myapp:projects";
+            await _cacheService.RemoveAsync(key);
+            return Ok(ApiResponse.Ok("Updated project successfully", response.Data));
         }
     }
 }

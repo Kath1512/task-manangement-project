@@ -1,173 +1,55 @@
-using Dapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using UserManagement;
-
+using System.Net;
+using System.Threading.Tasks;
+using TaskManagement.DTOs;
+using TaskManagement.Services.Interfaces;
 namespace TaskManagement.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly string _connString;
+    private readonly IAuthService _authService;
+    private readonly ICacheService _cacheService;
 
-
-    public AuthController(IConfiguration config)
+    public AuthController(IAuthService authService, ICacheService cacheService)
     {
-        _connString = config.GetConnectionString("DefaultConnection")!;
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        _authService = authService;
+        _cacheService = cacheService;
     }
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterDTO registerDTO)
+    public async Task<IActionResult> RegisterAsync([FromBody] CreateUserRequestDTO registerDTO)
     {
-        using var db = new NpgsqlConnection(_connString);
-        var InsertNewUserSQL = "INSERT INTO USERS(username, password, email, role, full_name) " +
-                  "VALUES (@Username, @Password, @Email, CAST(@Role AS user_role), @FullName)" +
-                  "RETURNING id";
-        var findUsernameSql = "SELECT COUNT(*) FROM Users WHERE username = @Username";
-        var findEmailSql = "SELECT COUNT(*) FROM Users WHERE email = @Email";
-        var AddUserToTeamSQL = """
-            UPDATE Teams
-            SET member_ids = array_append(member_ids, @Id)
-            WHERE id = 1
-            RETURNING id AS team_id, leader_id
-            """;
-        try
+        var response = await _authService.RegisterAsync(registerDTO);
+        if(response.Success == false)
         {
-            var usernameExists = db.ExecuteScalar<int>(findUsernameSql, new {Username = registerDTO.Username });
-            var emailExists = db.ExecuteScalar<int>(findEmailSql, new {Email = registerDTO.Email });
-            if(usernameExists > 0)
-            {
-                return Conflict(new { success = false, message = "Username already exists" });
-            }
-            if(emailExists > 0)
-            {
-                return Conflict(new { success = true, message = "Email already exists" });
-            }
-            int userId = db.ExecuteScalar<int>(InsertNewUserSQL, registerDTO);
-            if(registerDTO.Role == "developer")
-            {
-                var team = db.QuerySingle<UserTeam>(AddUserToTeamSQL, new {Id = userId});
-                return Ok(new
-                {
-                    success = true,
-                    message = "User registered successfully",
-                    data = new
-                    {
-                        id = userId,
-                        registerDTO.Username,
-                        registerDTO.Email,
-                        registerDTO.Role,
-                        registerDTO.FullName,
-                        team.TeamId,
-                        team.LeaderId
-                    }
-                });
-            }
-            return Ok(new
-            {
-                success = true,
-                message = "User registered successfully",
-                data = new
-                {
-                    id = userId,
-                    registerDTO.Username,
-                    registerDTO.Email,
-                    registerDTO.Role,
-                    registerDTO.FullName
-                }
-            });
+            return StatusCode(response.ErrorCode ?? (int) HttpStatusCode.InternalServerError, ApiResponse.Error(response.ErrorMessage!));
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { sucess = false, message = "Something went wrong " +  ex.Message });
-        }
+        var key = "myapp:users";
+        await _cacheService.RemoveAsync(key);
+        return Ok(ApiResponse.Ok("Create user successfully", response.Data));
     }
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDTO loginDTO)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginDTO)
     {
-        using var db = new NpgsqlConnection(_connString);
-
-        var sql = """
-            SELECT * FROM Users WHERE username = @Username
-            """;
-        var findTeamSQL = """
-            SELECT id AS team_id, leader_id
-            FROM Teams 
-            WHERE @userId = ANY(member_ids)
-            LIMIT 1
-            """;
-        try
+        var response = await _authService.LoginAsync(loginDTO);
+        if(response.Success == false)
         {
-            var user = db.QueryFirstOrDefault<UserDTO>(sql, new { Username = loginDTO.Username });
-            if (user == null)
-            {
-                return NotFound(new { success = false, message = "Username not found" });
-            }
-            if (loginDTO.Password != user.Password)
-            {
-                return Unauthorized(new { success = false, message = "Wrong password" });
-            }
-
-            var team = db.QueryFirstOrDefault<UserTeam>(findTeamSQL, new { userId = user.Id });
-            if (team != null)
-            {
-                return Ok(new
-                {
-                    success = true,
-                    message = "Login successfully",
-                    data = new
-                    {
-                        user.Username,
-                        user.Id,
-                        user.Email,
-                        user.Role,
-                        user.FullName,
-                        team.LeaderId,
-                        team.TeamId
-                    }
-                });
-            }
-            return Ok(new { success = true, message = "Login successfully", data = new {
-                user.Username,
-                user.Id,
-                user.Email,
-                user.Role,
-                user.FullName,
-            } });
+            return StatusCode(response.ErrorCode ?? (int) HttpStatusCode.InternalServerError, ApiResponse.Error(response.ErrorMessage!));
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { success = false, message = "Something went wrong " + ex.Message });
-        }
+        return Ok(ApiResponse.Ok("Login successfully", response.Data!));
     }
 
     [HttpPost("change-password")]
-    public IActionResult ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
     {
-        using var db = new NpgsqlConnection(_connString);
-        var findUserSQL = """
-            SELECT * FROM Users WHERE id=@Id
-            """;
-        var user = db.QueryFirstOrDefault<UserDTO>(findUserSQL, new { Id = changePasswordDTO.Id });
-        if(user == null)
+        var response = await _authService.ChangePasswordAsync(changePasswordDTO);
+        if(response.Success == false)
         {
-            return NotFound(new { success = false, message = "User not found" });
+            return StatusCode(response.ErrorCode ?? (int)HttpStatusCode.InternalServerError, ApiResponse.Error(response.ErrorMessage!));
         }
-        if (user.Password != changePasswordDTO.OldPassword)
-        {
-            return Unauthorized(new { success = false, message = "Current password does not match" });
-        }
-        if(user.Password == changePasswordDTO.NewPassword)
-        {
-            return BadRequest(new { success = false, message = "New password must be different from the current password!" });
-        }
-        var updatePasswordSQL = """
-            UPDATE Users
-            SET password=@NewPassword
-            WHERE id=@Id
-            """;
-        db.Execute(updatePasswordSQL, new { NewPassword =  changePasswordDTO.NewPassword, Id = changePasswordDTO.Id});
-        return Ok(new { success = true, message = "Changed password successfully" });
+        return Ok(ApiResponse.Ok("Update password successfully", default));
     }
 }

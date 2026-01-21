@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TaskManagement.Models;
 
@@ -12,7 +13,6 @@ public partial class User
     public string Password { get; set; } = null!;
 
     public string Email { get; set; } = null!;
-    public UserRole Role { get; set; } = UserRole.developer!;
 
     public DateTime? CreatedAt { get; set; }
 
@@ -20,13 +20,9 @@ public partial class User
 
     public string? FullName { get; set; }
 
-    public int? TeamId { get; set; }
-
-    public int? LeaderId { get; set; }
-
     public virtual ICollection<Project> ProjectCreators { get; set; } = new List<Project>();
-
     public virtual ICollection<Project> ProjectLeaders { get; set; } = new List<Project>();
-
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
 }
+
+

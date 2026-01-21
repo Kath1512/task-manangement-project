@@ -1,44 +1,49 @@
 @if(currentProject() == null){
-    <app-error-page errorMessage="404 Page Not Found"></app-error-page>
+        <app-error-page errorMessage="404 Page Not Found"></app-error-page>
 }
-@else{
-    <main>
-        <h2>Project Detail</h2>
-        <div></div>
-        <div class="display">
-            @for(item of displayProject(); track item[0]){
-                @if(item[0] != 'creatorId' && item[0] != 'leaderId'){
-                    <div class="row">
-                        <div class="key cell">{{ item[0] }}</div>
-                        @switch (item[0]){
-                            @case('deadline'){
-                                <div class="value cell">{{ item[1] | date }}</div>
+@else {
+    @if(currentUser() == null || !isPermitted()){
+        <app-error-page errorMessage="Permission denied"></app-error-page>
+    }
+    @else{
+        <main>
+            <h2>Project Detail</h2>
+            <div></div>
+            <div class="display">
+                @for(item of displayProject(); track item[0]){
+                    @if(item[0] != 'creatorId' && item[0] != 'leaderId'){
+                        <div class="row">
+                            <div class="key cell">{{ item[0] }}</div>
+                            @switch (item[0]){
+                                @case('deadline'){
+                                    <div class="value cell">{{ item[1] | date }}</div>
+                                }
+                                @case('createdAt'){
+                                    <div class="value cell">{{ item[1] | date }}</div>
+                                }
+                                @case('status'){
+                                    <div class="value cell">
+                                        <div [ngClass]="['status', item[1]]">{{ item[1] }}</div>
+                                    </div>
+                                }
+                                @default {
+                                    <div class="value cell">{{ item[1] }}</div>
+                                }
                             }
-                            @case('createdAt'){
-                                <div class="value cell">{{ item[1] | date }}</div>
-                            }
-                            @case('status'){
-                                <div class="value cell">
-                                    <div [ngClass]="['status', item[1]]">{{ item[1] }}</div>
-                                </div>
-                            }
-                            @default {
-                                <div class="value cell">{{ item[1] }}</div>
-                            }
-                        }
-                    </div>
+                        </div>
+                    }
                 }
+            </div>
+            @if(canEdit()){
+                <button (click)="isOpenEditProjectModal = true">
+                    <mat-icon>edit</mat-icon>
+                    Edit project
+                </button>
             }
-        </div>
-        @if(isAuthorized){
-            <button (click)="isOpenEditProjectModal = true">
-                <mat-icon>edit</mat-icon>
-                Edit project
-            </button>
-        }
-        @if(isOpenEditProjectModal){
-            <app-modal-edit-project (closeEvent)="isOpenEditProjectModal = false"
-                [currentProjectDetail]="currentProject()!"></app-modal-edit-project>
-        }
-    </main>
+            @if(isOpenEditProjectModal){
+                <app-modal-edit-project (closeEvent)="isOpenEditProjectModal = false"
+                    [currentProjectDetail]="currentProject()!"></app-modal-edit-project>
+            }
+        </main>
+    }
 }

@@ -28,7 +28,7 @@ public partial class TaskmanagementContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .HasPostgresEnum("type_status", new[] { "Planned", "In progress", "Completed", "Cancelled" })
+            .HasPostgresEnum("type_status", new[] { "Planned", "InProgress", "Completed", "Cancelled" })
             .HasPostgresEnum("user_role", new[] { "admin", "leader", "developer" });
 
         modelBuilder.Entity<Project>(entity =>

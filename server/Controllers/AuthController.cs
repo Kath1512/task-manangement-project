@@ -1,12 +1,6 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Validations;
 using Npgsql;
-using System.Net;
-using System.Text.Json;
 using UserManagement;
 
 namespace TaskManagement.Controllers;
@@ -16,13 +10,11 @@ namespace TaskManagement.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly string _connString;
-    private readonly ILogger<AuthController> _logger;
 
 
-    public AuthController(IConfiguration config, ILogger<AuthController> logger)
+    public AuthController(IConfiguration config)
     {
         _connString = config.GetConnectionString("DefaultConnection")!;
-        _logger = logger;
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
     }
     [HttpPost("register")]

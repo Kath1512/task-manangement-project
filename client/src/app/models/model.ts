@@ -60,6 +60,7 @@ export interface IProject{
     title: string;
     creatorId: number;
     leaderId: number;
+    teamId: number;
 }
 
 export interface IProjectForm{

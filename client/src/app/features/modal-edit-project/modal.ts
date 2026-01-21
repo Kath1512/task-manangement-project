@@ -27,6 +27,7 @@ export class ModalEditProject implements OnInit {
     ngOnInit(): void {
         const dl = this.currentProjectDetail()!.deadline.split('T')[0];
         this.editProjectForm = this.fb.group({
+            id: this.fb.control(this.currentProjectDetail()?.id, {nonNullable: true}),
             title: this.fb.control(this.currentProjectDetail()?.title, {nonNullable: true}),
             description: this.fb.control(this.currentProjectDetail()?.description, {nonNullable: true}),
             deadline: this.fb.control(dl, {nonNullable: true}),

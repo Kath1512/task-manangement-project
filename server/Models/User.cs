@@ -24,3 +24,5 @@ public partial class User
     public virtual ICollection<Project> ProjectLeaders { get; set; } = new List<Project>();
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
 }
+
+

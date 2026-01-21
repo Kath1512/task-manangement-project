@@ -25,7 +25,7 @@ SET row_security = off;
 
 CREATE TYPE public.type_status AS ENUM (
     'Planned',
-    'In progress',
+    'InProgress',
     'Completed',
     'Cancelled'
 );
@@ -196,37 +196,37 @@ COPY public.projects (id, description, created_at, status, deadline, note, title
 25	Jelly is hungry	2025-10-07	Planned	2025-10-18	good	Jelly projects	7	3	2
 26	get a new gun	2025-10-07	Completed	2025-10-16	nice	John Wick new project	4	9	1
 2	Lorem islpum	2025-10-03	Planned	2025-04-10	bad	No title	3	3	2
-11	random	2025-10-04	In progress	2025-10-10	random	random title	1	3	2
+11	random	2025-10-04	InProgress	2025-10-10	random	random title	1	3	2
 9	add new close button	2025-10-04	Planned	2025-10-11	button must have red background	add button	1	3	2
 8		2025-10-04	Planned	2025-10-11		Test	1	3	2
-1	Testing a new project	2025-10-02	In progress	2025-03-10	good	No title	3	9	1
+1	Testing a new project	2025-10-02	InProgress	2025-03-10	good	No title	3	9	1
 10		2025-10-04	Planned	2025-10-03		no title	1	9	1
 7	Implement authentication and user management	2025-10-03	Completed	2025-11-15	This should support both email and Google sign-in	Auth & User Module	4	9	1
-5	Build a new dashboard	2025-10-03	In progress	2025-12-31	This is a top priority project	Dashboard Project	2	9	1
-20	harry needs a new magic stick	2025-10-07	In progress	2025-10-08	good	harry's project	8	3	2
+5	Build a new dashboard	2025-10-03	InProgress	2025-12-31	This is a top priority project	Dashboard Project	2	9	1
+20	harry needs a new magic stick	2025-10-07	InProgress	2025-10-08	good	harry's project	8	3	2
 21	Test interaction	2025-10-07	Completed	2025-10-09	no note	Test interaction	8	3	2
 22	test interaction	2025-10-07	Planned	2025-10-08	test interaction	test interaction	8	3	2
 23	test interaction	2025-10-07	Planned	2025-10-17	test interaction	test interaction	8	3	2
 24	Test interaction	2025-10-07	Completed	2025-10-08	successfull	Test interaction (5)	8	3	2
 27	create first project	2025-10-08	Completed	2025-10-10	done	Alice first project	2	9	1
-28	Add filter for project and user	2025-10-08	In progress	2025-10-10	ok	Big project	9	9	1
-29	cache need to be refreshed every 5 mins	2025-10-15	In progress	2025-10-17	do for user too	test cache project	2	9	1
+28	Add filter for project and user	2025-10-08	InProgress	2025-10-10	ok	Big project	9	9	1
+29	cache need to be refreshed every 5 mins	2025-10-15	InProgress	2025-10-17	do for user too	test cache project	2	9	1
 30	add	2025-10-15	Planned	2025-10-18	add	add	2	9	1
-31	update	2025-10-15	In progress	2025-10-16	good\n	update cache for user	2	9	1
-32	test cache	2025-10-15	In progress	2025-10-16	ok	test cache duration	2	9	1
+31	update	2025-10-15	InProgress	2025-10-16	good\n	update cache for user	2	9	1
+32	test cache	2025-10-15	InProgress	2025-10-16	ok	test cache duration	2	9	1
 33	good	2025-10-15	Planned	2025-10-16	good	test cache duration 30s	2	9	1
 34	god	2025-10-15	Completed	2025-10-16	god	test cache duration 1min	2	9	1
 35	good	2025-10-15	Planned	2025-10-16	good	test cache duration 5 mins	2	9	1
-36	good	2025-10-15	In progress	2025-10-16	good\n	handle duplicate project after adding project	2	9	1
+36	good	2025-10-15	InProgress	2025-10-16	good\n	handle duplicate project after adding project	2	9	1
 37	abc	2025-10-15	Planned	2025-10-16		abc	2	9	1
 38	test bed	2025-10-15	Planned	2025-10-09		test bed	2	9	1
 39	done	2025-10-15	Completed	2025-10-16		remove duplicate	2	9	1
-40	ok	2025-10-15	In progress	2025-10-16		test duplicate request	2	9	1
-41	ok	2025-10-15	In progress	2025-10-16		test duplicate request	2	9	1
+40	ok	2025-10-15	InProgress	2025-10-16		test duplicate request	2	9	1
+41	ok	2025-10-15	InProgress	2025-10-16		test duplicate request	2	9	1
 42		2025-10-15	Planned	2025-10-10		duplicate	2	9	1
 43		2025-10-15	Completed	2025-10-16		check referesh cache button	2	9	1
-44	abc	2025-10-15	In progress	2025-10-16		harry's project	8	3	2
-45	abc	2025-10-15	In progress	2025-10-17		new project	3	3	2
+44	abc	2025-10-15	InProgress	2025-10-16		harry's project	8	3	2
+45	abc	2025-10-15	InProgress	2025-10-17		new project	3	3	2
 \.
 
 

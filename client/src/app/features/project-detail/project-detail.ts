@@ -24,7 +24,9 @@ export class ProjectDetail implements OnInit {
     currentProject = signal<IProject | null>(null);
     displayProject = signal<([string, any])[] | null>(null);
     isOpenEditProjectModal = false;
-    isAuthorized: boolean = false;
+    isPermitted = computed(() => this.currentProject()?.teamId == this.currentUser()?.teamId);
+    canEdit = computed(() => (this.currentUser()?.id == this.currentProject()?.leaderId) ||
+                            (this.currentUser()?.id == this.currentProject()?.creatorId));
 
     fetchProjectById(projectId: number): void {
         this.projectService.getProjectById(projectId).subscribe({
@@ -33,17 +35,17 @@ export class ProjectDetail implements OnInit {
         })
     }
     ngOnInit(): void {
+        if(this.currentUser() == null) return;
         const projectId = this.route.snapshot.paramMap.get('id');
         if(projectId == null || Number.isNaN(projectId)) return;
         this.fetchProjectById(Number(projectId));
-        this.isAuthorized = (this.currentUser()?.id == this.currentProject()?.leaderId) ||
-                            (this.currentUser()?.id == this.currentProject()?.creatorId);
     }
 
     handleSuccess(data: APIResponse<IProject>){
         if(data.success == true){
-            this.displayProject.set(Object.entries<any>(data.data!));
-            this.currentProject.set(data.data!)
+            const thisProject = data.data;
+            this.displayProject.set(Object.entries<any>(thisProject!));
+            this.currentProject.set(thisProject!)
             console.log(data);
             return;
         }

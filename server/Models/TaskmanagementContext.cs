@@ -6,6 +6,7 @@ namespace TaskManagement.Models;
 
 public partial class TaskmanagementContext : DbContext
 {
+    private readonly string? connectionString;
     public TaskmanagementContext()
     {
     }

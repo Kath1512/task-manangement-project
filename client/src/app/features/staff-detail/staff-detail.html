@@ -1,1 +1,27 @@
-<p>staff-detail works!</p>
+<div class="main-page">
+    <header>
+        <h2>{{currentStaff()?.fullName}}'s profile</h2>
+    </header>
+    <main>
+        <form id="form-change-password">
+            <div class="form-main">
+                <div class="form-input">
+                    <label>Full Name:</label>
+                    <div>{{currentStaff()?.fullName}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Role:</label>
+                    <div>{{currentStaff()?.role}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Email:</label>
+                    <div>{{currentStaff()?.email}}</div>
+                </div>
+                <div class="form-input">
+                    <label>Team Id:</label>
+                    <div>{{currentStaff()?.teamId}}</div>
+                </div>
+            </div>
+        </form>
+    </main>
+</div>

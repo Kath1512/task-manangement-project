@@ -34,5 +34,20 @@ namespace TaskManagement.Services
             }
         }
 
+        public async Task<ServiceResponse<UserResponseDTO>> GetUserById(int id)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByIdAsync(id);
+                var data = user.Adapt<UserResponseDTO>();
+                return ServiceResponse<UserResponseDTO>.Ok(data);
+            }
+            catch(DbException ex)
+            {
+                Console.WriteLine(ex?.InnerException?.Message);
+                return ServiceResponse<UserResponseDTO>.Error("Unhandled Error", (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
     }
 }

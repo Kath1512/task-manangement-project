@@ -20,5 +20,5 @@ export const routes: Routes = [
     { path: 'my-profile', loadComponent: () => import('./features/my-profile/my-profile').then(c => c.MyProfile) },
     { path: 'staff', loadComponent: () => import('./features/staff-management/staff-management').then(c => c.StaffManagement) },
     { path: 'staff/:id', loadComponent: () => import('./features/staff-detail/staff-detail').then(c => c.StaffDetail) },
-    { path: '', loadComponent: () => import('./features/home/home').then(c => c.Home) },
+    { path: '', loadComponent: () => import('./features/project/project').then(c => c.Project) },
 ];

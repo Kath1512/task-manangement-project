@@ -39,6 +39,11 @@ export class UserService {
         return of(response);
     }
 
+    getUser(staffId: number | undefined): Observable<APIResponse<IStaff>> {
+        const targetRoute = staffId ? `${getUsersRoute}/${staffId}` : getUsersRoute;
+        return this.apiService.get<APIResponse<IStaff>>(targetRoute);
+    }
+
     getAllLeaders(): Observable<APIResponse<IStaff[]>> {
         this.lastCache = Date.now();
         if(!this.currentCacheLeaders().length || Date.now() - this.lastCache > this.cacheDurationRefresh){

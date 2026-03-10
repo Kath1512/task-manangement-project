@@ -41,5 +41,22 @@ namespace TaskManagement.Controllers
             if(response.Data is not null) await _cacheService.SetDataAsync<List<UserResponseDTO>>(key, response.Data);
             return Ok(ApiResponse.Ok("Return all relevant users", response.Data!));
         }
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            var response = await _userService.GetUserById(userId);
+            if(response.Success == false)
+            {
+                return StatusCode(response.ErrorCode ?? 500, ApiResponse.Error(response.ErrorMessage ?? "Internal Server Error"));
+            }
+
+            if(response.Data == null)
+            {
+                return StatusCode(404, ApiResponse.Error("User not found"));
+            }
+
+            return Ok(ApiResponse.Ok("Return the user", response.Data!));
+
+        }
     }
 }

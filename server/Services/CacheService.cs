@@ -26,7 +26,7 @@ namespace TaskManagement.Services
             var json = JsonSerializer.Serialize(data);
             var options = new DistributedCacheEntryOptions()
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1)
 
             };
             await _cache.SetStringAsync(key, json, options);

@@ -32,6 +32,11 @@
                                 <a [routerLink]="['/staff', el.leaderId]">{{ el[colHeader.key] }}</a>
                             </div>
                         }
+                        @case ('fullName'){
+                            <div class="cell">
+                                <a [routerLink]="['/staff', el.leaderId]">{{ el[colHeader.key] }}</a>
+                            </div>
+                        }
                         @default {
                             <div class="cell">
                                 {{ el[colHeader.key] }}

@@ -59,7 +59,11 @@ export class Table<T> implements OnInit, OnChanges {
     }
 
     handleFindPage(event: Event): void {
-        const value = Number((event.target as HTMLInputElement).value);
+        let inp = (event.target as HTMLInputElement).value;
+        if(inp.trim() == ''){
+            return;
+        }
+        const value = Number(inp)
         if(isNaN(value)) return;
         this.currentPage.set(value);
     }

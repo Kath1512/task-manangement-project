@@ -106,6 +106,10 @@ export interface ITeam{
 export interface ISearchForm{
     title?: string;
     leader?: string;
+    role?: string;
+    id?: string;
+    teamId?: string;
+    fullName?: string;
 }
 
 export class cacheResponse<T> implements APIResponse<T> {

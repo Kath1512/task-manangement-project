@@ -99,8 +99,8 @@ export class Project implements OnInit {
         this.filteredProjects.set(this.projects().filter(p => {
             let ok = true;
             for(const [k, value] of Object.entries(values)){
-                const key = k as keyof ISearchForm;
-                if(!p[key].match(new RegExp(value, "i"))) ok = false;
+                const key = k as keyof ISearchForm && k as keyof IProject;
+                if(!String(p[key]).match(new RegExp(value, "i"))) ok = false;
             }
             if(ok) return p;
             return;

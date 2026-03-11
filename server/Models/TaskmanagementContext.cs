@@ -11,9 +11,11 @@ public partial class TaskmanagementContext : DbContext
     {
     }
 
-    public TaskmanagementContext(DbContextOptions<TaskmanagementContext> options)
+    public TaskmanagementContext(DbContextOptions<TaskmanagementContext> options,
+    IConfiguration configuration)
         : base(options)
     {
+        connectionString = configuration.GetConnectionString("DefaultConnection");
     }
 
     public virtual DbSet<Project> Projects { get; set; }
@@ -23,7 +25,7 @@ public partial class TaskmanagementContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=db;Database=taskmanagement;Username=postgres;Password=postgres1512");
+        => optionsBuilder.UseNpgsql(connectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

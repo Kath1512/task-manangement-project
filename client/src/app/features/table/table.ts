@@ -27,7 +27,7 @@ export class Table<T> implements OnInit, OnChanges {
 
     colKeys: (keyof T)[] = [];
     totalItems = 1;
-    itemsPerPage = 5;
+    itemsPerPage = 8;
     totalPages = 1;
     currentPage = signal<number>(1);
     displayDataSource = computed(() => {
